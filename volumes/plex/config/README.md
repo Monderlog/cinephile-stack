@@ -1,5 +1,5 @@
 In case of migrating a plexmediaserver, for example, from the default installation of Ubuntu, put the folder in this directory "Library" from \var\lib\plexmediaserver\
-For other settings, see the location of the settings on the link: [Where is the Plex Media Server data directory located?][]:
+For other settings, see the location of the settings on the link: [Where is the Plex Media Server data directory located?][]
 
 
 
