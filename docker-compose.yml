@@ -1,0 +1,72 @@
+version: '3.8'
+
+services:
+  transmission:
+    image: transmission
+    container_name: transmission-container
+
+    ports:
+      - "9091:9091/tcp"
+      - "51413:51413/tcp"
+      - "51413:51413/udp"
+    tmpfs:
+      - /tmp
+    volumes:
+      - ~${USERID:?err}/cinephile-stack/volumes/transmission/config:/transmission/config
+      - ${GENERAL_SHARE_PATH:?err}:${GENERAL_SHARE_PATH}
+      - ${GENERAL_SHARE_PATH}/.incomplete:${GENERAL_SHARE_PATH}/.incomplete
+    restart: unless-stopped
+  samba:
+    image: dperson/samba
+    container_name: samba
+    restart: always
+    stdin_open: true
+    tty: true
+    environment:
+      TZ: '${TZ:?err}'
+      # advertise shares, default: true, or false (open ports 137, 138)
+      NMBD: "true"
+      USER: "${SMB_USER:?err};${SMB_USER_PASSWD:?err}"
+      USERID: "${USERID:?err}"
+      GROUPID: "${GROUPID:?err}"
+      # add a single share. If you need more, use command instead of environment
+      SHARE: "${GENERAL_SHARE_NAME:?err};${GENERAL_SHARE_PATH:?err};${BROWSABLE:?err};${READ_ONLY:?err};${SMB_GUEST_LOGIN:?err};${SMB_USERS_LOGIN:?err};${SMB_ADMINS:?err};${WRITELIST:?err};${SMB_DESCRIPTION:?err}"
+      WORKGROUP: ${WORKGROUP:?err}
+      # if set, disables recycle bin for shares
+      # RECYCLE: ""
+      # if set, disables SMB2 minimum version
+      # SMB: ""
+    read_only: false
+    volumes:
+      - ${GENERAL_SHARE_PATH:?err}:${GENERAL_SHARE_PATH:?err} # :z allows share to be used by multiple containers
+    networks:
+      - default
+    ports:
+      - "137:137/udp" #required to advertise shares (NMBD)
+      - "138:138/udp" #required to advertise shares (NMBD)
+      - "139:139/tcp" # smb port
+      - "445:445/tcp" # smb port
+    tmpfs:
+      - /tmp
+  plex:
+    image: plexinc/pms-docker
+    container_name: plex
+    ports:
+      - "32400:32400/tcp"
+      - "3005:3005/tcp"
+      - "8324:8324/tcp"
+      - "32469:32469/tcp"
+      - "1900:1900/udp"
+      - "32410:32410/udp"
+      - "32412:32412/udp"
+      - "32413:32413/udp"
+      - "32414:32414/udp"
+    restart: unless-stopped
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+      - ~${USERID:?err}/cinephile-stack/volumes/plex/config:/config   #in case of migrating a plexmediaserver, for example, from the default installation of Ubuntu, put the folder in this directory "Library" from \var\lib\plexmediaserver\
+      - ~${USERID:?err}/cinephile-stack/volumes/plex/transcode:/transcode   #the best solution would be to mount the directory on a fast drive
+      - ${GENERAL_SHARE_PATH:?err}:${GENERAL_SHARE_PATH:?err}   #This forwarding is my main directory with media files, in my case I store all media libraries in it, but this is not necessary and can be configured
+    environment:
+      - TZ=${TZ:?err}
