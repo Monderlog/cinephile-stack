@@ -1,4 +1,4 @@
-In case of migrating a plexmediaserver, for example, from the default installation of **Ubuntu**, put the folder in this directory **Library** from *\var\lib\plexmediaserver\ *
+In case of migrating a plexmediaserver, for example, from the default installation of **Ubuntu**, put the folder in this directory **Library** from *\var\lib\plexmediaserver*
 
 To find out where settings are stored for other distributions, read the documentation at the link: *[Where is the Plex Media Server data directory located?][]*
 
