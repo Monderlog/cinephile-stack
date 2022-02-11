@@ -2,21 +2,29 @@ version: '3.8'
 
 services:
   transmission:
-    image: transmission
-    container_name: transmission-container
-
-    ports:
-      - "9091:9091/tcp"
-      - "51413:51413/tcp"
-      - "51413:51413/udp"
-    tmpfs:
-      - /tmp
+  #https://github.com/linuxserver/docker-transmission
+    image: lscr.io/linuxserver/transmission
+    container_name: transmission
+    environment:
+      - PUID=${USERID:?err}
+      - PGID=${GROUPID:?err}
+      - TZ=${TZ:?err}
+      - TRANSMISSION_WEB_HOME=${TRM_WEB_HOME}
+      - USER=${MEDIASERVER_USER:?err}
+      - PASS=${MEDIASERVER_USER_PASSWD:?err}
+      - WHITELIST=${TRM_WHITELIST}
+      - HOST_WHITELIST=${TRM_HOST_WHITELIST}
     volumes:
-      - ~${USERID:?err}/cinephile-stack/volumes/transmission/config:/transmission/config
-      - ${GENERAL_SHARE_PATH:?err}:${GENERAL_SHARE_PATH}
-      - ${GENERAL_SHARE_PATH}/.incomplete:${GENERAL_SHARE_PATH}/.incomplete
+      - ~${USERID:?err}/cinephile-stack/volumes/transmission/config:/config
+      - ${GENERAL_SHARE_PATH:?err}:/share
+      - ${GENERAL_SHARE_PATH:?err}/.torrents:/share/.torrents
+    ports:
+      - ${TRM_WEB_PORT:&err}:9091
+      - ${TRM_TORRENT_PORT:&err}:51413
+      - ${TRM_TORRENT_PORT:&err}:51413/udp
     restart: unless-stopped
   samba:
+  #https://github.com/dperson/samba
     image: dperson/samba
     container_name: samba
     restart: always
@@ -26,7 +34,7 @@ services:
       TZ: '${TZ:?err}'
       # advertise shares, default: true, or false (open ports 137, 138)
       NMBD: "true"
-      USER: "${SMB_USER:?err};${SMB_USER_PASSWD:?err}"
+      USER: "${MEDIASERVER_USER:?err};${MEDIASERVER_USER_PASSWD:?err}"
       USERID: "${USERID:?err}"
       GROUPID: "${GROUPID:?err}"
       # add a single share. If you need more, use command instead of environment
@@ -49,6 +57,7 @@ services:
     tmpfs:
       - /tmp
   plex:
+  #https://github.com/plexinc/pms-docker
     image: plexinc/pms-docker
     container_name: plex
     ports:
