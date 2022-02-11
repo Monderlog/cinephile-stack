@@ -9,8 +9,6 @@ Everything is configured so that all configuration is stored in the user's home 
 1. copy the repository to the **home** folder of the selected user
 2. fill all variables of the **.env** file with their values
 3. optionally, you can tune transmission configuration file:
-
-~$USER/cinephile-stack/volumes/transmission/config/**settings.json**
-5. optionally, if you are migrating a media server, move the plexmediaserver configuration (directory **Library**) to the directory:
-
-~$USER/cinephile-stack/volumes/plex/**config**
+  ~$USER/cinephile-stack/volumes/transmission/config/**settings.json**
+4. optionally, if you are migrating a media server, move the plexmediaserver configuration (directory **Library**) to the directory:
+  ~$USER/cinephile-stack/volumes/plex/**config**
