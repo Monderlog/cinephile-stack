@@ -1,11 +1,11 @@
 # cinephile-stack
 This stack is a compilation of several earlier projects for quickly deploying a home media server using:
 
-**[transmission](https://github.com/Monderlog/transmission-docker/?target=_blank)**
+**[transmission](https://github.com/linuxserver/docker-transmission)**
 
-**[plexmediaserver](https://github.com/Monderlog/plexmediaserver-docker/?target=_blank)**
+**[plexmediaserver](https://github.com/plexinc/pms-docker)**
 
-**[samba](https://github.com/Monderlog/samba-docker/?target=_blank)**
+**[samba](https://github.com/dperson/samba)**
 
 Everything is configured so that all configuration is stored in the user's home directory ~$USER/cinephile-stack
 
